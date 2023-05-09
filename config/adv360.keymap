@@ -4,12 +4,17 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/backlight.h>
 
+// Layers
 #define DEF 0
 #define GRK 1
 #define SYM 2
 #define NAV 3
 #define FUN 4
 #define NUM 5
+
+// Home Row Mods Macro
+#define HRML(k1,k2,k3,k4) &ht LGUI  k1 &ht LALT k2  &ht LSHFT k3 &ht LCTRL k4
+#define HRMR(k1,k2,k3,k4) &ht RCTRL k1 &ht RSHFT k2 &ht RALT  k3 &ht RGUI  k4
 
 / {
     behaviors {
@@ -32,90 +37,90 @@
     default_layer {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none       &none        &none       &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans      &trans       &trans      &trans    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none
+        &trans    &kp Q      &kp W      &kp F      &kp P       &kp B      &trans                                                                                                      &kp J       &kp L        &kp U       &kp Y     &kp APOS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp A      &kp R      &kp S      &kp T       &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp M       &kp N        &kp E       &kp I     &kp O      &none
+        &trans   HRML(A,        R,          S,         T)      &kp G      &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp M      HRML(N,           E,          I,        O)     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none           &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none
+        &trans    &kp Z      &kp X      &kp C      &kp D       &kp V              &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none       &none        &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     grk {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none       &none        &none       &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans      &trans       &trans      &trans    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none
+        &trans    &kp Q      &kp W      &kp F      &kp P       &kp B      &trans                                                                                                      &kp J       &kp L        &kp U       &kp Y     &kp APOS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp A      &kp R      &kp S      &kp T       &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp M       &kp N        &kp E       &kp I     &kp O      &none
+        &trans   HRML(A,        R,          S,         T)      &kp G      &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp M      HRML(N,           E,          I,        O)     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none           &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none
+        &trans    &kp Z      &kp X      &kp C      &kp D       &kp V              &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none        &none       &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans       &trans      &trans    &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     sym {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none        &none      &none        &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans       &trans     &trans       &trans    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp EXCL   &kp AT     &kp HASH   &kp DLLR    &kp PRCNT  &none                                                                                                       &kp EQUAL   &kp GRAVE   &kp COLON    &kp SEMI  &kp APOS   &none
+        &trans    &kp EXCL   &kp AT     &kp HASH   &kp DLLR    &kp PRCNT  &trans                                                                                                      &kp EQUAL   &kp GRAVE   &kp COLON    &kp SEMI  &kp PLUS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &kp CARET  &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &none
+        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &kp CARET  &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &kp BSLH   &kp PIPE    &kp AMPS           &none           &none          &none      &none   &none   &none      &none          &none           &kp TILDE   &kp RPAR    &kp RBRC     &kp RBKT  &kp UNDER  &none
+        &trans    &trans     &trans     &kp BSLH   &kp PIPE    &kp AMPS           &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp TILDE   &kp RPAR    &kp RBRC     &kp RBKT  &kp UNDER  &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none       &none        &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     nav {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none       &none        &none       &none      &none      &none
+        &trans    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans      &trans       &trans      &trans     &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp ESC    &none      &none      &none       &kp INS    &none                                                                                                       &kp PG_UP   &kp HOME     &kp UP      &kp END    &kp CAPS   &none
+        &trans    &kp ESC    &trans     &trans     &trans      &kp INS    &trans                                                                                                      &kp PG_UP   &kp HOME     &kp UP      &kp END    &kp CAPS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &none
+        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &trans     &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LC(Z)  &kp LC(X)  &kp LC(C)  &none       &kp LC(V)          &none           &none          &none      &none   &none   &none      &none          &none           &none       &kp BSPC     &kp TAB     &kp K_APP  &none      &none
+        &trans    &kp LC(Z)  &kp LC(X)  &kp LC(C)  &trans      &kp LC(V)          &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &trans      &kp BSPC     &kp TAB     &kp K_APP  &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none       &none        &none      &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans     &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     fun {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none       &none        &none       &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans      &trans       &trans      &trans    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none       &none      &none                                                                                                       &kp F12     &kp F7       &kp F8      &kp F9    &kp SLCK   &none
+        &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &kp F12     &kp F7       &kp F8      &kp F9    &kp SLCK   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp F11     &kp F4       &kp F5      &kp F6    &tog GRK   &none
+        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &trans     &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp F11     &kp F4       &kp F5      &kp F6    &tog GRK   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LC(Y)  &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none           &kp F10     &kp F1       &kp F2      &kp F3    &none      &none
+        &trans    &kp LC(Y)  &trans     &trans     &trans      &trans             &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp F10     &kp F1       &kp F2      &kp F3    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none       &none        &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     num {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &none     &none      &none      &none      &none       &none    | &none |                                                                                                     &none        &none      &none        &none     &none      &none
+        &reset    &trans     &trans     &trans     &trans      &trans   | &trans|                                                                                                     &trans       &trans     &trans       &trans    &trans     &bootloader
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none       &none      &none                                                                                                       &kp EQUAL   &kp N7      &kp N8       &kp N9    &kp PLUS   &none
+        &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &kp EQUAL   &kp N7      &kp N8       &kp N9    &kp PLUS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &none
+        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &trans     &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none           &kp N0      &kp N1      &kp N2       &kp N3    &kp FSLH   &none
+        &trans    &trans     &trans     &trans     &trans      &trans             &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp N0      &kp N1      &kp N2       &kp N3    &kp FSLH   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt BSPC NAV   &none                      &none      &lt BSPC FUN   &lt SPACE NUM               &none       &none        &none     &none      &none
+        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     &trans
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };

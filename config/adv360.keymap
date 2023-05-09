@@ -13,8 +13,8 @@
 #define NUM 5
 
 // Home Row Mods Macro
-#define HRML(k1,k2,k3,k4) &ht_bl LGUI  k1 &ht_bl LALT k2  &ht_bl LSHFT k3 &ht_bl LCTRL k4
-#define HRMR(k1,k2,k3,k4) &ht_bl RCTRL k1 &ht_bl RSHFT k2 &ht_bl RALT  k3 &ht_bl RGUI  k4
+#define HRML(k1,k2,k3,k4) &hm LGUI  k1 &hm LALT k2  &hm LSHFT k3 &hm LCTRL k4
+#define HRMR(k1,k2,k3,k4) &hm RCTRL k1 &hm RSHFT k2 &hm RALT  k3 &hm RGUI  k4
 
 / {
     behaviors {

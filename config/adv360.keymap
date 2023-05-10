@@ -4,6 +4,14 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/backlight.h>
 
+#include "../../zmk-nodefree-config/keypos_def/keypos_adv360.h"
+#define KEYS_L LT0 LT1 LT2 LT3 LT4 LT5 LM0 LM1 LM2 LM3 LM4 LM5 LB0 LB1 LB2 LB3 LB4 LB5
+#define KEYS_R RT0 RT1 RT2 RT3 RT4 RT5 RM0 RM1 RM2 RM3 RM4 RM5 RB0 RB1 RB2 RB3 RB4 RB5
+#define KEYS_T LH1 LH0 RH0 RH1
+
+#define HM_TAPPING_TERM 300
+#define HM_TAPPING_TERM_FAST 200
+
 // Layers
 #define DEF 0
 #define GRK 1
@@ -13,8 +21,8 @@
 #define NUM 5
 
 // Home Row Mods Macro
-#define HRML(k1,k2,k3,k4) &hm LGUI  k1 &hm LALT k2  &hm LSHFT k3 &hm LCTRL k4
-#define HRMR(k1,k2,k3,k4) &hm RCTRL k1 &hm RSHFT k2 &hm RALT  k3 &hm RGUI  k4
+// #define HRML(k1,k2,k3,k4) &hm_l LGUI  k1 &hm_l LALT k2  &hm_shift_l LSHFT k3 &hm_l LCTRL k4
+// #define HRMR(k1,k2,k3,k4) &hm_r RCTRL k1 &hm_shift_r RSHFT k2 &hm_r RALT  k3 &hm_r RGUI  k4
 
 // Bluetoth
 #define BTS(profile) &bt BT_SEL profile
@@ -23,14 +31,66 @@
     behaviors {
       #include "macros.dtsi"
 
-      hm: homerow_mods {
+//      hm: homerow_mods {
+//          compatible = "zmk,behavior-hold-tap";
+//          label = "HOMEROW_MODS";
+//          #binding-cells = <2>;
+//          tapping-term-ms = <280>;
+//          quick_tap_ms = <175>;
+//          flavor = "balanced";
+//          bindings = <&kp>, <&kp>;
+//      };
+      // Further optimization using urob's timerless homerow mods method:
+      // https://github.com/urob/zmk-config#timeless-homerow-mods
+      hm_l: homerow_mods_left {
           compatible = "zmk,behavior-hold-tap";
-          label = "HOMEROW_MODS";
+          label = "HOMEROW_MODS_LEFT;
           #binding-cells = <2>;
-          tapping-term-ms = <280>;
-          quick_tap_ms = <175>;
-          flavor = "balanced";
           bindings = <&kp>, <&kp>;
+          flavor = "balanced";
+          tapping-term-ms = <175>; // repeat on tap-into-hold
+          global-quick-tap-ms = <150>;
+          hold-trigger-key-positions = <KEYS_R KEYS_T>;
+          hold-trigger-on-release;
+      };
+      hm_r: homerow_mods_right {
+          compatible = "zmk,behavior-hold-tap";
+          label = "HOMEROW_MODS_RIGHT;
+          #binding-cells = <2>;
+          bindings = <&kp>, <&kp>;
+          flavor = "balanced";
+          tapping-term-ms = <175>; // repeat on tap-into-hold
+          global-quick-tap-ms = <150>;
+          hold-trigger-key-positions = <KEYS_L KEYS_T>;
+          hold-trigger-on-release;
+      };
+
+      // Positional Homerow mods for shift
+      // Use faster tapping term and disable some features that may
+      // cause false negatives.
+      hm_shift_l: hm_shift_l {
+          compatible = "zmk,behavior-hold-tap";
+          label = "HOMEROW_MODS_FAST_LEFT";
+          #binding-cells = <2>;
+          bindings = <&kp>, <&kp>;
+          flavor = "balanced";
+          tapping-term-ms = <HM_TAPPING_TERM_FAST>;
+          quick_tap_ms = <175>;
+          // global-quick-tap-ms = <150>;         // requires PR #1387
+          hold-trigger-key-positions = <KEYS_R KEYS_T>;
+          // hold-trigger-on-release;             // requires PR #1423
+      };
+      hm_shift_r: hm_shift_r {
+          compatible = "zmk,behavior-hold-tap";
+          label = "HOMEROW_MODS_FAST_RIGHT";
+          #binding-cells = <2>;
+          bindings = <&kp>, <&kp>;
+          flavor = "balanced";
+          tapping-term-ms = <HM_TAPPING_TERM_FAST>;
+          quick_tap_ms = <175>;
+          // global-quick-tap-ms = <150>;         // requires PR #1387
+          hold-trigger-key-positions = <KEYS_L KEYS_T>;
+          // hold-trigger-on-release;             // requires PR #1423
       };
     };
 
@@ -44,7 +104,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &none       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRML(N,           E,          I,        O)     &none 
+        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRMR(N,           E,          I,        O)     &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none                       &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
@@ -59,7 +119,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &none       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRML(N,           E,          I,        O)     &none 
+        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRMR(N,           E,          I,        O)     &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none                       &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
@@ -74,7 +134,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp EXCL   &kp AT     &kp HASH   &kp DLLR    &kp PRCNT  &none                                                                                                       &none       &kp EQUAL   &kp GRAVE   &kp COLON    &kp SEMI  &kp PLUS   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &kp CARET  &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &none 
+        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &kp CARET  &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &none      &none      &kp BSLH   &kp PIPE    &kp AMPS           &none           &none          &none      &none   &none   &none      &none          &none                       &kp TILDE   &kp RPAR    &kp RBRC     &kp RBKT  &kp UNDER  &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
@@ -89,7 +149,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp ESC    &none      &none      &none       &kp INS    &none                                                                                                       &none       &kp PG_UP   &kp HOME     &kp UP      &kp END    &kp CAPS   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &none 
+        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp LC(Z)  &kp LC(X)  &kp LC(C)  &none       &kp LC(V)          &none           &none          &none      &none   &none   &none      &none          &none                       &none       &kp BSPC     &kp TAB     &kp K_APP  &none      &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
@@ -104,7 +164,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &kp F12     &kp F7       &kp F8      &kp F9    &kp SLCK   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp F11     &kp F4       &kp F5      &kp F6    &none      &tog GRK
+        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp F11     &kp F4       &kp F5      &kp F6    &none      &tog GRK
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &kp LC(Y)  &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &kp F10     &kp F1       &kp F2      &kp F3    &none      &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
@@ -119,7 +179,7 @@
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &kp EQUAL   &kp N7      &kp N8       &kp N9    &kp PLUS   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &none 
+        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
         &none     &none      &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &kp N0      &kp N1      &kp N2       &kp N3    &kp FSLH   &none 
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤

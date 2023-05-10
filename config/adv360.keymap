@@ -16,6 +16,9 @@
 #define HRML(k1,k2,k3,k4) &hm LGUI  k1 &hm LALT k2  &hm LSHFT k3 &hm LCTRL k4
 #define HRMR(k1,k2,k3,k4) &hm RCTRL k1 &hm RSHFT k2 &hm RALT  k3 &hm RGUI  k4
 
+// Bluetoth
+#define BTS(profile) &bt BT_SEL profile
+
 / {
     behaviors {
       #include "macros.dtsi"
@@ -97,22 +100,22 @@
     fun {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &trans      &trans       &trans      &trans    &trans     &trans
+        &reset    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &trans      &trans       &trans      &trans    &trans     &bootloader
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
         &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &kp F12     &kp F7       &kp F8      &kp F9    &kp SLCK   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &trans     &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp F11     &kp F4       &kp F5      &kp F6    &tog GRK   &trans
+        &trans    &kp LALT   &kp LGUI   &kp LSHFT  &kp LCTRL   &trans     &trans                  &kp LSHFT      &kp LALT   &trans  &trans  &kp LGUI   &kp LCTRL                      &kp F11     &kp F4       &kp F5      &kp F6    &trans     &tog GRK
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
         &trans    &kp LC(Y)  &trans     &trans     &trans      &trans             &trans          &trans         &trans     &trans  &trans  &trans     &trans         &trans          &kp F10     &kp F1       &kp F2      &kp F3    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
-        &trans    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     &trans
+        BTS(0)    &trans     &trans     &trans     &trans                         &lt SYM ENTER   &lt BSPC NAV   &trans                     &trans     &lt BSPC FUN   &lt SPACE NUM               &trans      &trans       &trans    &trans     BTS(1)
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘           └───────────┴────────────┴─────────┴──────────┴───────┘
       >;
     };
     num {
       bindings = <
    // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────┐
-        &reset    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &trans       &trans     &trans       &trans    &trans     &bootloader
+        &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &trans       &trans     &trans       &trans    &trans     &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤
         &trans    &trans     &trans     &trans     &trans      &trans     &trans                                                                                                      &kp EQUAL   &kp N7      &kp N8       &kp N9    &kp PLUS   &trans
    // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────┤

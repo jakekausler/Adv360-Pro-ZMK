@@ -34,3 +34,27 @@
     #binding-cells = <0>;
     bindings = <&kp LS(K)>, <&kp I>, <&kp N>, <&kp E>, <&kp S>, <&kp I>, <&kp S>;
   };
+  macro_user: macro_user {
+    compatible = "zmk,behavior-macro";
+    label = "macro_user";
+    #binding-cells = <0>;
+    bindings = <&kp J>, <&kp A>, <&kp K>, <&kp E>, <&kp K>, <&kp A>, <&kp U>, <&kp S>, <&kp L>, <&kp E>, <&kp R>;
+  };
+  macro_pass: macro_pass {
+    compatible = "zmk,behavior-macro";
+    label = "macro_pass";
+    #binding-cells = <0>;
+    bindings = <&kp LS(J)>, <&kp A>, <&kp K>, <&kp E>, <&kp N0>, <&kp N2>, <&kp N1>, <&kp F>, <&kp N2>, <&kp F>, <&kp N1>, <&kp EXCL>;
+  };
+  macro_yahoo: macro_yahoo {
+    compatible = "zmk,behavior-macro";
+    label = "macro_yahoo";
+    #binding-cells = <0>;
+    bindings = <&kp AT>, <&kp Y>, <&kp A>, <&kp H>, <&kp O>, <&kp O>, <&kp DOT>, <&kp C>, <&kp O>, <&kp M>;
+  };
+  macro_gmail: macro_gmail {
+    compatible = "zmk,behavior-macro";
+    label = "macro_yahoo";
+    #binding-cells = <0>;
+    bindings = <&kp AT>, <&kp G>, <&kp M>, <&kp A>, <&kp I>, <&kp L>, <&kp DOT>, <&kp C>, <&kp O>, <&kp M>;
+  };

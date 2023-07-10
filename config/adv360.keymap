@@ -3,12 +3,13 @@
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/rgb.h>
 #include <dt-bindings/zmk/backlight.h>
+#include "mouse.dtsi"
+#include "helper.h"
+#include "greek.dtsi"
 
-#include "../zmk-nodefree-config/helper.h"
-#include "../zmk-nodefree-config/keypos_def/keypos_adv360.h"
-#define KEYS_L LT0 LT1 LT2 LT3 LT4 LT5 LM0 LM1 LM2 LM3 LM4 LM5 LB0 LB1 LB2 LB3 LB4 LB5
-#define KEYS_R RT0 RT1 RT2 RT3 RT4 RT5 RM0 RM1 RM2 RM3 RM4 RM5 RB0 RB1 RB2 RB3 RB4 RB5
-#define KEYS_T LH1 LH0 RH0 RH1
+#define KEYS_L  17 18 19 29 30 31 32 33 48 49 50 51 52 
+#define KEYS_R 22 23 24 25 26 42 43 44 45 46 61 62 63 64 65
+#define KEYS_T 35 36 37 38 39 40 53 54 55 56 57 58 59 60 72 73 74 75 76 77
 
 #define HM_TAPPING_TERM 300
 #define HM_TAPPING_TERM_FAST 200
@@ -20,13 +21,281 @@
 #define NAV 3
 #define FUN 4
 #define NUM 5
+#define MOU 6
+#define MAC 7
+#define SKP 8
+#define SKN 9
 
 // Home Row Mods Macro
-// #define HRML(k1,k2,k3,k4) &hm_l LGUI  k1 &hm_l LALT k2  &hm_shift_l LSHFT k3 &hm_l LCTRL k4
-// #define HRMR(k1,k2,k3,k4) &hm_r RCTRL k1 &hm_shift_r RSHFT k2 &hm_r RALT  k3 &hm_r RGUI  k4
+#define HRML(k1,k2,k3,k4) &hm_l LGUI  k1 &hm_l LALT k2  &hm_shift_l LSHFT k3 &hm_l LCTRL k4
+#define HRMR(k1,k2,k3,k4) &hm_r RCTRL k1 &hm_shift_r RSHFT k2 &hm_r RALT  k3 &hm_r RGUI  k4
 
 // Bluetoth
 #define BTS(profile) &bt BT_SEL profile
+
+// Hyper
+#define HYPER LS(LC(LA(LGUI)))
+#define MEH LS(LC(LA))
+
+#define MODMORPH(name, keycode, shifted_keycode) \
+    UC_MODMORPH(name, &kp keycode, &kp shifted_keycode)
+
+#define CTRL_SHIFT_MODMORPH(name, keycode, ctrl_keycode, ctrl_shift_keycode) \
+     MODMORPH(SHIFT_ ## name, ctrl_keycode, ctrl_shift_keycode) \
+     / { \
+          behaviors { \
+               name: name { \
+                    compatible = "zmk,behavior-mod-morph"; \
+                    label = ZMK_HELPER_STRINGIFY(UC_MORPH_ ## name); \
+                    #binding-cells = <0>; \
+                    bindings = <&kp keycode>, <&SHIFT_ ## name>; \
+                    mods = <(MOD_LCTL|MOD_RCTL)>; \
+               }; \
+          }; \
+     };
+
+//MODMORPH(lc1t, , )
+//MODMORPH(lc1b, , )
+MODMORPH(lc2t, MINUS, PLUS)
+MODMORPH(lc2b, LBKT, RBKT)
+MODMORPH(lc3t, LT, GT)
+MODMORPH(lc3b, LBRC, RBRC)
+MODMORPH(lc4t, COLON, SEMI)
+MODMORPH(lc4b, LPAR, RPAR)
+MODMORPH(lc5t, FSLH, BSLH)
+MODMORPH(lc5b, UNDER, PIPE)
+MODMORPH(rc1t, N0, EQUAL)
+MODMORPH(rc1b, N5, PRCNT)
+MODMORPH(rc2t, N1, EXCL)
+MODMORPH(rc2b, N6, CARET)
+MODMORPH(rc3t, N2, AT)
+MODMORPH(rc3b, N7, AMPS)
+MODMORPH(rc4t, N3, HASH)
+MODMORPH(rc4b, N8, STAR)
+MODMORPH(rc5t, N4, DLLR)
+//MODMORPH(rc5b, N9, )
+MODMORPH(rb3b, COMMA, QMARK)
+MODMORPH(rb5b, GRAVE, TILDE)
+
+CTRL_SHIFT_MODMORPH(sk9, H, N9, APOS)
+CTRL_SHIFT_MODMORPH(sk8, F, N8, UP)
+CTRL_SHIFT_MODMORPH(sk7, P, N7, DQT)
+CTRL_SHIFT_MODMORPH(sk6, R, N6, LEFT)
+CTRL_SHIFT_MODMORPH(sk5, C, N5, DOWN)
+CTRL_SHIFT_MODMORPH(sk4, L, N4, RIGHT)
+CTRL_SHIFT_MODMORPH(sk3, O, N3, FSLH)
+CTRL_SHIFT_MODMORPH(sk2, S, N2, DOT)
+CTRL_SHIFT_MODMORPH(sk1, M, N1, MINUS)
+CTRL_SHIFT_MODMORPH(sk0, I, N0, X)
+CTRL_SHIFT_MODMORPH(skcomma, U, U, COMMA)
+
+#define COMBO(NAME, TIMEOUT, KEYPOS, BINDINGS) \
+    combo_##NAME { \
+        timeout-ms = <TIMEOUT>; \
+        bindings = <BINDINGS>; \
+        key-positions = <KEYPOS>; \
+    };
+#define COMBO_WITH_LAYER(NAME, TIMEOUT, KEYPOS, BINDINGS, LAYERS) \
+    combo_##NAME { \
+        timeout-ms = <TIMEOUT>; \
+        bindings = <BINDINGS>; \
+        key-positions = <KEYPOS>; \
+        layers = <LAYERS>; \
+    };
+
+/ {
+     combos {
+          compatible = "zmk,combos";
+          
+          // Left Columns 1
+          COMBO(esc, 50, 15 29, &kp ESC)
+          COMBO(tab, 50, 29 49, &kp TAB)
+          
+          // Left Columns 2
+          COMBO(minus_plus, 50, 16 30, &lc2t)
+          COMBO(brackets, 50, 30 50, &lc2b)
+          
+          // Left Columns 3
+          COMBO(gt_ls, 50, 17 31, &lc3t)
+          COMBO(braces, 50, 31 51, &lc3b)
+          
+          // Left Columns 4
+          COMBO(colon_semi, 50, 18 32, &lc4t)
+          COMBO(parens, 50, 32 52, &lc4b)
+          
+          // Left Columns 5
+          COMBO(slashes, 50, 19 33, &lc5t)
+          COMBO(under_pipe, 50, 33 53, &lc5b)
+          
+          // Thumbs
+          // TODO: Make this MEH on hold
+          COMBO(caps_word, 50, 73 78, &caps_word)
+          COMBO(lang_hyper_tog, 50, 74 77, &tog_kp HYPER GRK)
+          COMBO_WITH_LAYER(nav_tog, 50, 73 74, &tog NAV, DEF GRK SYM NAV FUN NUM MOU MAC)
+          COMBO(ctrl_bksp, 50, 77 78, &kp LC(BSPC))
+          COMBO(mou_tog, 50, 73 74 77 78, &tog MOU)
+          //COMBO_WITH_LAYER(sk_COMMA, 50, 73 74 33, &kp COMMA, SKP)
+          //COMBO_WITH_LAYER(sk_APOS, 50, 73 74 16, &kp APOS, SKP)
+          //COMBO_WITH_LAYER(sk_DQT, 50, 73 74 18, &kp DQT, SKP)
+          //COMBO_WITH_LAYER(sk_FSLH, 50, 73 74 50, &kp FSLH, SKP)
+          //COMBO_WITH_LAYER(sk_DOT, 50, 73 74 51, &kp DOT, SKP)
+          //COMBO_WITH_LAYER(sk_MINUS, 50, 73 74 52, &kp MINUS, SKP)
+          //COMBO_WITH_LAYER(sk_X, 50, 73 74 53, &kp X, SKP)
+          //COMBO_WITH_LAYER(sk_UP, 50, 73 74 17, &kp UP, SKP)
+          //COMBO_WITH_LAYER(sk_DOWN, 50, 73 74 31, &kp DOWN, SKP)
+          //COMBO_WITH_LAYER(sk_LEFT, 50, 73 74 30, &kp LEFT, SKP)
+          //COMBO_WITH_LAYER(sk_RIGHT, 50, 73 74 32, &kp RIGHT, SKP)
+          //COMBO_WITH_LAYER(sk_BSPC, 50, 73 74, &kp BSPC, SKP)
+          
+          // Right Columns 1
+          COMBO(zero_equals, 50, 22 42, &rc1t)
+          COMBO(five_percent, 50, 42 62, &rc1b)
+          
+          // Right Columns 2
+          COMBO(one_excl, 50, 23 43, &rc2t)
+          COMBO(six_caret, 50, 43 63, &rc2b)
+          
+          // Right Columns 3
+          COMBO(two_at, 50, 24 44, &rc3t)
+          COMBO(seven_amp, 50, 44 64, &rc3b)
+          
+          // Right Columns 4
+          COMBO(three_hash, 50, 25 45, &rc4t)
+          COMBO(eight_star, 50, 45 65, &rc4b)
+          
+          // Right Columns 5
+          COMBO(four_dllr, 50, 26 46, &rc5t)
+          COMBO(nine, 50, 46 66, &kp N9)
+          
+          
+          // Greek Combos
+          COMBO_WITH_LAYER(el_as, 5000, 29 40, &el_as, GRK)
+          COMBO_WITH_LAYER(el_asa, 5000, 29 40 35, &el_asa, GRK)
+          COMBO_WITH_LAYER(el_asai, 5000, 29 40 35 45, &el_asai, GRK)
+          COMBO_WITH_LAYER(el_asg, 5000, 29 40 36, &el_asg, GRK)
+          COMBO_WITH_LAYER(el_asgi, 5000, 29 40 36 45, &el_asgi, GRK)
+          COMBO_WITH_LAYER(el_asc, 5000, 29 40 59, &el_asc, GRK)
+          COMBO_WITH_LAYER(el_asci, 5000, 29 40 59 45, &el_asci, GRK)
+          COMBO_WITH_LAYER(el_asi, 5000, 29 40 45, &el_asi, GRK)
+          COMBO_WITH_LAYER(el_ar, 5000, 29 39, &el_ar, GRK)
+          COMBO_WITH_LAYER(el_ara, 5000, 29 39 35, &el_ara, GRK)
+          COMBO_WITH_LAYER(el_arai, 5000, 29 39 35 45, &el_arai, GRK)
+          COMBO_WITH_LAYER(el_arg, 5000, 29 39 36, &el_arg, GRK)
+          COMBO_WITH_LAYER(el_argi, 5000, 29 39 36 45, &el_argi, GRK)
+          COMBO_WITH_LAYER(el_arc, 5000, 29 39 59, &el_arc, GRK)
+          COMBO_WITH_LAYER(el_arci, 5000, 29 39 59 45, &el_arci, GRK)
+          COMBO_WITH_LAYER(el_ari, 5000, 29 39 45, &el_ari, GRK)
+          COMBO_WITH_LAYER(el_aa, 5000, 29 35, &el_aa, GRK)
+          COMBO_WITH_LAYER(el_aai, 5000, 29 35 45, &el_aai, GRK)
+          COMBO_WITH_LAYER(el_ag, 5000, 29 36, &el_ag, GRK)
+          COMBO_WITH_LAYER(el_agi, 5000, 29 36 45, &el_agi, GRK)
+          COMBO_WITH_LAYER(el_ab, 5000, 29 75, &el_ab, GRK)
+          COMBO_WITH_LAYER(el_ac, 5000, 29 59, &el_ac, GRK)
+          COMBO_WITH_LAYER(el_aci, 5000, 29 59 45, &el_aci, GRK)
+          COMBO_WITH_LAYER(el_al, 5000, 29 56, &el_al, GRK)
+          COMBO_WITH_LAYER(el_ai, 5000, 29 45, &el_ai, GRK)
+          COMBO_WITH_LAYER(el_es, 5000, 44 40, &el_es, GRK)
+          COMBO_WITH_LAYER(el_esa, 5000, 44 40 35, &el_esa, GRK)
+          COMBO_WITH_LAYER(el_esg, 5000, 44 40 36, &el_esg, GRK)
+          COMBO_WITH_LAYER(el_er, 5000, 44 39, &el_er, GRK)
+          COMBO_WITH_LAYER(el_era, 5000, 44 39 35, &el_era, GRK)
+          COMBO_WITH_LAYER(el_erg, 5000, 44 39 36, &el_erg, GRK)
+          COMBO_WITH_LAYER(el_ea, 5000, 44 35, &el_ea, GRK)
+          COMBO_WITH_LAYER(el_eg, 5000, 44 36, &el_eg, GRK)
+          COMBO_WITH_LAYER(el_hs, 5000, 63 40, &el_hs, GRK)
+          COMBO_WITH_LAYER(el_hsa, 5000, 63 40 35, &el_hsa, GRK)
+          COMBO_WITH_LAYER(el_hsai, 5000, 63 40 35 45, &el_hsai, GRK)
+          COMBO_WITH_LAYER(el_hsg, 5000, 63 40 36, &el_hsg, GRK)
+          COMBO_WITH_LAYER(el_hsgi, 5000, 63 40 36 45, &el_hsgi, GRK)
+          COMBO_WITH_LAYER(el_hsc, 5000, 63 40 59, &el_hsc, GRK)
+          COMBO_WITH_LAYER(el_hsci, 5000, 63 40 59 45, &el_hsci, GRK)
+          COMBO_WITH_LAYER(el_hsi, 5000, 63 40 45, &el_hsi, GRK)
+          COMBO_WITH_LAYER(el_hr, 5000, 63 39, &el_hr, GRK)
+          COMBO_WITH_LAYER(el_hra, 5000, 63 39 35, &el_hra, GRK)
+          COMBO_WITH_LAYER(el_hrai, 5000, 63 39 35 45, &el_hrai, GRK)
+          COMBO_WITH_LAYER(el_hrg, 5000, 63 39 36, &el_hrg, GRK)
+          COMBO_WITH_LAYER(el_hrgi, 5000, 63 39 36 45, &el_hrgi, GRK)
+          COMBO_WITH_LAYER(el_hrc, 5000, 63 39 59, &el_hrc, GRK)
+          COMBO_WITH_LAYER(el_hrci, 5000, 63 39 59 45, &el_hrci, GRK)
+          COMBO_WITH_LAYER(el_hri, 5000, 63 39 45, &el_hri, GRK)
+          COMBO_WITH_LAYER(el_ha, 5000, 63 35, &el_ha, GRK)
+          COMBO_WITH_LAYER(el_hai, 5000, 63 35 45, &el_hai, GRK)
+          COMBO_WITH_LAYER(el_hg, 5000, 63 36, &el_hg, GRK)
+          COMBO_WITH_LAYER(el_hgi, 5000, 63 36 45, &el_hgi, GRK)
+          COMBO_WITH_LAYER(el_hc, 5000, 63 59, &el_hc, GRK)
+          COMBO_WITH_LAYER(el_hci, 5000, 63 59 45, &el_hci, GRK)
+          COMBO_WITH_LAYER(el_hi, 5000, 63 45, &el_hi, GRK)
+          COMBO_WITH_LAYER(el_is, 5000, 45 40, &el_is, GRK)
+          COMBO_WITH_LAYER(el_isa, 5000, 45 40 35, &el_isa, GRK)
+          COMBO_WITH_LAYER(el_isg, 5000, 45 40 36, &el_isg, GRK)
+          COMBO_WITH_LAYER(el_isc, 5000, 45 40 59, &el_isc, GRK)
+          COMBO_WITH_LAYER(el_ir, 5000, 45 39, &el_ir, GRK)
+          COMBO_WITH_LAYER(el_ira, 5000, 45 39 35, &el_ira, GRK)
+          COMBO_WITH_LAYER(el_irg, 5000, 45 39 36, &el_irg, GRK)
+          COMBO_WITH_LAYER(el_irc, 5000, 45 39 59, &el_irc, GRK)
+          COMBO_WITH_LAYER(el_ia, 5000, 45 35, &el_ia, GRK)
+          COMBO_WITH_LAYER(el_ig, 5000, 45 36, &el_ig, GRK)
+          COMBO_WITH_LAYER(el_ib, 5000, 45 75, &el_ib, GRK)
+          COMBO_WITH_LAYER(el_ic, 5000, 45 59, &el_ic, GRK)
+          COMBO_WITH_LAYER(el_id, 5000, 45 76, &el_id, GRK)
+          COMBO_WITH_LAYER(el_idg, 5000, 45 76 36, &el_idg, GRK)
+          COMBO_WITH_LAYER(el_ida, 5000, 45 76 35, &el_ida, GRK)
+          COMBO_WITH_LAYER(el_idc, 5000, 45 76 59, &el_idc, GRK)
+          COMBO_WITH_LAYER(el_il, 5000, 45 56, &el_il, GRK)
+          COMBO_WITH_LAYER(el_os, 5000, 46 40, &el_os, GRK)
+          COMBO_WITH_LAYER(el_osa, 5000, 46 40 35, &el_osa, GRK)
+          COMBO_WITH_LAYER(el_osg, 5000, 46 40 36, &el_osg, GRK)
+          COMBO_WITH_LAYER(el_or, 5000, 46 39, &el_or, GRK)
+          COMBO_WITH_LAYER(el_ora, 5000, 46 39 35, &el_ora, GRK)
+          COMBO_WITH_LAYER(el_org, 5000, 46 39 36, &el_org, GRK)
+          COMBO_WITH_LAYER(el_oa, 5000, 46 35, &el_oa, GRK)
+          COMBO_WITH_LAYER(el_og, 5000, 46 36, &el_og, GRK)
+          COMBO_WITH_LAYER(el_us, 5000, 24 40, &el_us, GRK)
+          COMBO_WITH_LAYER(el_usa, 5000, 24 40 35, &el_usa, GRK)
+          COMBO_WITH_LAYER(el_usg, 5000, 24 40 36, &el_usg, GRK)
+          COMBO_WITH_LAYER(el_usc, 5000, 24 40 59, &el_usc, GRK)
+          COMBO_WITH_LAYER(el_ur, 5000, 24 39, &el_ur, GRK)
+          COMBO_WITH_LAYER(el_ura, 5000, 24 39 35, &el_ura, GRK)
+          COMBO_WITH_LAYER(el_urg, 5000, 24 39 36, &el_urg, GRK)
+          COMBO_WITH_LAYER(el_urc, 5000, 24 39 59, &el_urc, GRK)
+          COMBO_WITH_LAYER(el_ua, 5000, 24 35, &el_ua, GRK)
+          COMBO_WITH_LAYER(el_ug, 5000, 24 36, &el_ug, GRK)
+          COMBO_WITH_LAYER(el_ub, 5000, 24 75, &el_ub, GRK)
+          COMBO_WITH_LAYER(el_uc, 5000, 24 59, &el_uc, GRK)
+          COMBO_WITH_LAYER(el_ud, 5000, 24 76, &el_ud, GRK)
+          COMBO_WITH_LAYER(el_udg, 5000, 24 76 36, &el_udg, GRK)
+          COMBO_WITH_LAYER(el_uda, 5000, 24 76 35, &el_uda, GRK)
+          COMBO_WITH_LAYER(el_udc, 5000, 24 76 59, &el_udc, GRK)
+          COMBO_WITH_LAYER(el_ul, 5000, 24 56, &el_ul, GRK)
+          COMBO_WITH_LAYER(el_ws, 5000, 53 40, &el_ws, GRK)
+          COMBO_WITH_LAYER(el_wsa, 5000, 53 40 35, &el_wsa, GRK)
+          COMBO_WITH_LAYER(el_wsai, 5000, 53 40 35 45, &el_wsai, GRK)
+          COMBO_WITH_LAYER(el_wsg, 5000, 53 40 36, &el_wsg, GRK)
+          COMBO_WITH_LAYER(el_wsgi, 5000, 53 40 36 45, &el_wsgi, GRK)
+          COMBO_WITH_LAYER(el_wsc, 5000, 53 40 59, &el_wsc, GRK)
+          COMBO_WITH_LAYER(el_wsci, 5000, 53 40 59 45, &el_wsci, GRK)
+          COMBO_WITH_LAYER(el_wsi, 5000, 53 40 45, &el_wsi, GRK)
+          COMBO_WITH_LAYER(el_wr, 5000, 53 39, &el_wr, GRK)
+          COMBO_WITH_LAYER(el_wra, 5000, 53 39 35, &el_wra, GRK)
+          COMBO_WITH_LAYER(el_wrai, 5000, 53 39 35 45, &el_wrai, GRK)
+          COMBO_WITH_LAYER(el_wrg, 5000, 53 39 36, &el_wrg, GRK)
+          COMBO_WITH_LAYER(el_wrgi, 5000, 53 39 36 45, &el_wrgi, GRK)
+          COMBO_WITH_LAYER(el_wrc, 5000, 53 39 59, &el_wrc, GRK)
+          COMBO_WITH_LAYER(el_wrci, 5000, 53 39 59 45, &el_wrci, GRK)
+          COMBO_WITH_LAYER(el_wri, 5000, 53 39 45, &el_wri, GRK)
+          COMBO_WITH_LAYER(el_wa, 5000, 53 35, &el_wa, GRK)
+          COMBO_WITH_LAYER(el_wai, 5000, 53 35 45, &el_wai, GRK)
+          COMBO_WITH_LAYER(el_wg, 5000, 53 36, &el_wg, GRK)
+          COMBO_WITH_LAYER(el_wgi, 5000, 53 36 45, &el_wgi, GRK)
+          COMBO_WITH_LAYER(el_wc, 5000, 53 59, &el_wc, GRK)
+          COMBO_WITH_LAYER(el_wci, 5000, 53 59 45, &el_wci, GRK)
+          COMBO_WITH_LAYER(el_wci, 5000, 53 59 45, &el_wci, GRK)
+     };
+};
+
+&caps_word {
+     /delete-property/ ignore-modifiers;
+};
 
 / {
     behaviors {
@@ -45,22 +314,24 @@
       // https://github.com/urob/zmk-config#timeless-homerow-mods
       hm_l: homerow_mods_left {
           compatible = "zmk,behavior-hold-tap";
-          label = "HOMEROW_MODS_LEFT;
+          label = "HOMEROW_MODS_LEFT";
           #binding-cells = <2>;
           bindings = <&kp>, <&kp>;
           flavor = "balanced";
-          tapping-term-ms = <175>; // repeat on tap-into-hold
+          tapping-term-ms = <280>; // repeat on tap-into-hold
+          quick-tap-ms = <175>;
           global-quick-tap-ms = <150>;
           hold-trigger-key-positions = <KEYS_R KEYS_T>;
           hold-trigger-on-release;
       };
       hm_r: homerow_mods_right {
           compatible = "zmk,behavior-hold-tap";
-          label = "HOMEROW_MODS_RIGHT;
+          label = "HOMEROW_MODS_RIGHT";
           #binding-cells = <2>;
           bindings = <&kp>, <&kp>;
           flavor = "balanced";
-          tapping-term-ms = <175>; // repeat on tap-into-hold
+          tapping-term-ms = <280>; // repeat on tap-into-hold
+          quick-tap-ms = <175>;
           global-quick-tap-ms = <150>;
           hold-trigger-key-positions = <KEYS_L KEYS_T>;
           hold-trigger-on-release;
@@ -93,6 +364,18 @@
           hold-trigger-key-positions = <KEYS_L KEYS_T>;
           // hold-trigger-on-release;             // requires PR #1423
       };
+
+      // toggle layer on tap, key press on hold
+      tog_kp: tog_kp {
+          compatible = "zmk,behavior-hold-tap";
+          label = "tog_kp";
+          #binding-cells = <2>;
+          bindings = <&kp>, <&tog>;
+          flavor = "balanced";
+          tapping-term-ms = <HM_TAPPING_TERM_FAST>;
+          quick_tap_ms = <175>;
+          // global-quick-tap-ms = <150>;         // requires PR #1387
+      };
     };
 
   keymap {
@@ -100,91 +383,151 @@
 
     default_layer {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
-        &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none     &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+        &tog SKP  &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none     &none      &none 
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
         &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &none       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRMR(N,           E,          I,        O)     &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none                       &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none       &none        &none     &none      &none 
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU HRML(A,        R,          S,         T)      &kp G      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &kp M      HRMR(N,           E,          I,        O)     &none 
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none                       &kp K       &kp H       &rb3b        &kp DOT   &rb5b      &none 
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none       &none        &none     &none      &none 
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
     grk {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none     &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp Q      &kp W      &kp F      &kp P       &kp B      &none                                                                                                       &none       &kp J       &kp L        &kp U       &kp Y     &kp APOS   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none    HRML(A,        R,          S,         T)      &kp G      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp M      HRMR(N,           E,          I,        O)     &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp Z      &kp X      &kp C      &kp D       &kp V              &none           &none          &none      &none   &none   &none      &none          &none                       &kp K       &kp H        &kp COMMA   &kp DOT   &kp FSLH   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none        &none       &none     &none      &none 
-   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &el_ko     &el_se      &el_ph     &el_p       &el_b      &none                                                                                                       &none       &el_xi      &el_l        &el_u       &el_th    &kp APOS   &none 
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─35─acute─────┬─36─grave─┬───37──╥──38───┬─39─rough─┬─40─smooth────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &none     &el_a      &el_r       &el_s      &el_t       &el_g      &none                   &none          &none      &none   &none   &none      &none                          &el_st      &el_m       &el_n        &el_e       &el_i     &el_o      &none 
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼─56─long──┼───57──╫──58───┼─59─circu─┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &el_z      &el_x      &el_ps      &el_d       &el_w              &none           &none          &none      &none   &none   &none      &none          &none                       &el_k       &el_h        &kp COMMA   &kp DOT   &el_sp     &none 
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼─75─breve─┼───────╨───────┼─76─diagr─┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL     &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none        &none       &none     &none      &none 
+   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └──────────┴──────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
     sym {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none        &none      &none        &none     &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
         &none     &kp EXCL   &kp AT     &kp HASH   &kp DLLR    &kp PRCNT  &none                                                                                                       &none       &kp EQUAL   &kp GRAVE   &kp COLON    &kp SEMI  &kp PLUS   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &kp CARET  &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU  &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &kp CARET  &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &kp STAR    &kp LPAR    &kp LBRC     &kp LBKT  &kp MINUS  &none 
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
         &none     &none      &none      &kp BSLH   &kp PIPE    &kp AMPS           &none           &none          &none      &none   &none   &none      &none          &none                       &kp TILDE   &kp RPAR    &kp RBRC     &kp RBKT  &kp UNDER  &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none       &none        &none     &none      &none 
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none       &none        &none     &none      &none 
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
     nav {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none      &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp ESC    &none      &none      &none       &kp INS    &none                                                                                                       &none       &kp PG_UP   &kp HOME     &kp UP      &kp END    &kp CAPS   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &none      &none      &none      &none       &kp INS    &none                                                                                                       &none       &kp PG_UP   &kp HOME     &kp UP      &kp END    &kp CAPS   &none 
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &kp PG_DN   &kp LEFT     &kp DOWN    &kp RIGHT  &kp DEL    &none 
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
         &none     &kp LC(Z)  &kp LC(X)  &kp LC(C)  &none       &kp LC(V)          &none           &none          &none      &none   &none   &none      &none          &none                       &none       &kp BSPC     &kp TAB     &kp K_APP  &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none       &none        &none      &none      &none 
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none       &none        &none      &none      &none 
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
     fun {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
-        &reset    &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none     &none      &bootloader
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+      &bt BT_CLR  &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none       &none     &none      &none
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &kp F12     &kp F7       &kp F8      &kp F9    &kp SLCK   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp F11     &kp F4       &kp F5      &kp F6    &none      &tog GRK
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU  &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &kp F11     &kp F4       &kp F5      &kp F6    &none      &tog GRK
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
         &none     &kp LC(Y)  &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &kp F10     &kp F1       &kp F2      &kp F3    &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        BTS(0)    &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none       &none        &none     &none      BTS(1)
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        BTS(0)    &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none       &none        &none     &none      BTS(1)
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
     num {
       bindings = <
-   // ┌─────────┬──────────┬──────────┬──────────┬───────────┬──────────┬───────┐                                                                                                   ┌───────────┬───────────┬────────────┬─────────┬──────────┬───────────┬───────┐
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none        &none      &none        &none     &none      &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤                                                                                                   ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
         &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &kp EQUAL   &kp N7      &kp N8       &kp N9    &kp PLUS   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┤               ┌──────────────┬──────────┬───────╥───────┬──────────┬──────────────┐               ├───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &kp LSHFT      &kp LALT   &none   &none   &kp LGUI   &kp LCTRL                      &none       &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┼───────┼───────────────┼──────────────┼──────────┼───────╫───────┼──────────┼──────────────┼───────────────┼───────────┼───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU  &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &kp STAR    &kp N4      &kp N5       &kp N6    &kp MINUS  &none 
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
         &none     &none      &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &kp N0      &kp N1      &kp N2       &kp N3    &kp FSLH   &none 
-   // ├─────────┼──────────┼──────────┼──────────┼───────────┼──────────┘       ├───────────────┼──────────────┼──────────┼───────╨───────┼──────────┼──────────────┼───────────────┤           └───────────┼────────────┼─────────┼──────────┼───────────┼───────┤
-        &none     &none      &none      &none      &none                          &lt SYM ENTER   &lt NAV DEL    &none                      &none      &lt FUN BSPC   &lt NUM SPACE                           &none       &none        &none     &none      &none 
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &lt FUN BSPC   &mt LCTRL SPACE                         &none       &none        &none     &none      &none 
+   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
+      >;
+    };
+    mou {
+      bindings = <
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+        &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       U_WH_D       U_MS_U    U_WH_U     &none       &none
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU  &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &none       U_MS_L       U_MS_D    U_MS_R     &none       &none
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &none      &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &none       &none        &none     &none      &none       &none
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      U_BTN2         U_BTN1                                  &none        &none     &none      &none       &none
+   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
+      >;
+    };
+    mac {
+      bindings = <
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+        &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &none      &none      &none      &none       &none      &none                                                                                                       &none       &macro_yahoo &none       &none     &none      &none       &none
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &tog MOU  &kp LGUI   &kp LALT   &kp LSHFT  &kp LCTRL   &none      &none                   &none          &none      &none   &none   &none      &mo MAC                        &none       &macro_gmail &macro_user &macro_pass &none    &none       &none
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &none      &none      &none      &none       &none              &none           &none          &none      &none   &none   &none      &none          &none                       &none       &none        &none     &none      &none       &none
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT ENTER &lt NAV DEL    &none                      &none      &none          &none                                   &none        &none     &none      &none       &none
+   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
+      >;
+    };
+    skp {
+      bindings = <
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+        &tog SKP  &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &kp G      &sk9       &sk8       &sk7        &kp T      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &none     &kp A      &sk6       &sk5       &sk4        &kp U      &none                   &kp ENTER      &kp ESC    &none   &none   &none      &none                          &none       &none       &none        &none     &none      &none       &none
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &none      &sk3       &sk2       &sk1        &sk0               &none           &none          &kp TAB    &none   &none   &none      &none          &none                       &none       &none        &none     &none      &none       &none
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT SPACE &mt LCTRL DEL  &kp BSPC                   &none      &none          &none                                   &none        &none     &none      &none       &none
+   // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
+      >;
+    };
+    skn {
+      bindings = <
+   // ┌────00───┬────01────┬────02────┬────03────┬────04─────┬────05────┬───06──┐                                                                                                   ┌────07─────┬────08─────┬─────09─────┬───10────┬──────11──┬─────12────┬───13──┐
+        &tog SKP  &none      &none      &none      &none       &none      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────14───┼────15────┼────16────┼────17────┼────18─────┼────19────┼───20──┤                                                                                                   ├────21─────┼────22─────┼─────23─────┼───24────┼──────25──┼─────26────┼───27──┤
+        &none     &none      &sk9       &sk8       &sk7        &none      &none                                                                                                       &none       &none       &none        &none     &none      &none       &none
+   // ├────28───┼────29────┼────30────┼────31────┼────32─────┼────33────┼───34──┤               ┌─────35───────┬────36────┬───37──╥──38───┬────39────┬────40────────┐               ├────41─────┼────42─────┼─────43─────┼───44────┼──────45──┼─────46────┼───47──┤
+        &none     &none      &sk6       &sk5       &sk4        &none      &none                   &kp ENTER      &kp ESC    &none   &none   &none      &none                          &none       &none       &none        &none     &none      &none       &none
+   // ├────48───┼────49────┼────50────┼────51────┼────52─────┼────53────┼───────┼──────54───────┼─────55───────┼────56────┼───57──╫──58───┼────59────┼────60────────┼────61─────────┼───────────┼────62─────┼─────63─────┼───64────┼──────65──┼─────66────┼───67──┤
+        &none     &none      &sk3       &sk2       &sk1        &sk0               &none           &none          &kp TAB    &none   &none   &none      &none          &none                       &none       &none        &none     &none      &none       &none
+   // ├────68───┼────69────┼────70────┼────71────┼────72─────┼──────────┘       ├──────73───────┼─────74───────┼────75────┼───────╨───────┼────76────┼────77────────┼─────78────────┤           └───────────┼─────79─────┼───80────┼──────81──┼─────82────┼────83─┤
+        &none     &none      &none      &none      &none                          &mt LSHFT SPACE &mt LCTRL DEL  &kp BSPC                   &none      &none          &none                                   &none        &none     &none      &none       &none
    // └─────────┴──────────┴──────────┴──────────┴───────────┘                  └───────────────┴──────────────┴──────────┘               └───────────┴─────────────┴───────────────┘                       └────────────┴─────────┴──────────┴───────────┴───────┘
       >;
     };
